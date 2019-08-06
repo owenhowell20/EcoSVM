@@ -563,7 +563,7 @@ xvals, yvals, test_xvals, test_yvals = getMNIST()
 
 #Shuffle the order of the training values
 from sklearn.utils import shuffle
-xvals , yvals = shuffle( xvals , yvals, random_state=0)
+xvals , yvals = shuffle( xvals , yvals)
 
 
 #the labels
@@ -580,7 +580,7 @@ N_test = len(test_yvals)
 #Intial number of points used to compute steady state, can be user entered
 #This should be much greater than dataset dimension especily if dataset is highly non-linear
 #For MNIST dataset with RBF kernel the data set is essentialy linear so there is no problem with using small number of points
-N_start = 10
+N_start = 5
 
 #the intial datapoints and labels
 intial_xvals = xvals[0:N_start,:]
@@ -589,7 +589,7 @@ intial_yvals = yvals[0:N_start]
 
 #subsample to run in reasonable time
 #for results in paper please use whole dataset
-Ntrun = 100
+Ntrun = 200
 
 xvals = xvals[0:Ntrun,:]
 yvals = yvals[0:Ntrun]
@@ -638,7 +638,7 @@ plt.grid()
 plt.tick_params(labelsize=fontsize + 2)
 plt.tight_layout()
 plt.show()
-plt.savefig("./graphs/mnistacc")
+#plt.savefig("./graphs/mnistacc")
 plt.clf()
 
 
@@ -650,7 +650,7 @@ plt.tick_params(labelsize=fontsize + 2)
 plt.grid()
 plt.tight_layout()
 plt.show()
-plt.savefig("./graphs/mnistnum")
+#plt.savefig("./graphs/mnistnum")
 plt.clf()
 
 
