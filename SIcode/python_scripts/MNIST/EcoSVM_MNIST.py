@@ -284,11 +284,14 @@ def point_Run_EcoSVM( X, Y , active_data_x , active_data_y , support_vects , ind
 #Returns the set of active datapoints, the active data labels, the support vector values and the final lagrange multiplier
 def Run_EcoSVM( xvals, yvals, active_data_x, active_data_y, support_vects, index_val ):
 
+	N = len(yvals)
+
 	test_accuracy = np.zeros([ N - N_start])
 	number_active = np.zeros([ N - N_start])
 
 	#the dataset dimension
 	dimension = len(xvals[0,:])
+
 
 	#Run the EcoSVM algorithm over all points
 	for point in range(N_start,N):
@@ -313,9 +316,9 @@ def Run_EcoSVM( xvals, yvals, active_data_x, active_data_y, support_vects, index
 		number_active[ point - N_start ] = count_active
 
 
-		X = xvals[point,:]
+		X = xvals[point  ,:]
 
-		Y = yvals[point]
+		Y = yvals[point ]
 
 		#Run the EcoSVM algorithm on a single point
 		active_data_x, active_data_y, support_vects, index_val = point_Run_EcoSVM( X , Y , active_data_x, active_data_y , support_vects , index_val , dimension )
@@ -579,17 +582,17 @@ N_test = len(test_yvals)
 #For MNIST dataset with RBF kernel the data set is essentialy linear so there is no problem with using small number of points
 N_start = 10
 
-
-#subsample to run in reasonable time
-#for results in paper please use whole dataset
-Ntrun = 3000
-
-xvals = xvals[0:Ntrun,:]
-yvals = yvals[0:Ntrun]
-
 #the intial datapoints and labels
 intial_xvals = xvals[0:N_start,:]
 intial_yvals = yvals[0:N_start]
+
+
+#subsample to run in reasonable time
+#for results in paper please use whole dataset
+Ntrun = 100
+
+xvals = xvals[0:Ntrun,:]
+yvals = yvals[0:Ntrun]
 
 
 #Get the intial set of active datapoints, active datapoint labels, support vector values and the Lagrange multiplier
@@ -611,8 +614,8 @@ batcherror = SVM_error(test_xvals,test_yvals, batch_data_x, batch_data_y, batch_
 
 
 #averge batch error, averge number of batch support vectors
-batcherror = batcherror / N_reals
-batch_number_active = batch_number_active / N_reals
+batcherror = batcherror
+batch_number_active = batch_number_active
 
 #make accuracy plots vs time
 import os
