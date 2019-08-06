@@ -3,6 +3,7 @@
 
 #This code runs Eco_SVM on MNIST dataset
 #Note: This code takes significant computational time (+1 days aprox) , for the plots made in paper each realization was done in parallel
+#Note: The memory requirments are also large for full dataset. For running on personal compute please subsample data
 #Many thanks to https://www.bu.edu/tech/support/research/ for their advice on optimization
 
 #Import standard python packages
@@ -20,18 +21,20 @@ solvers.options['show_progress'] = False
 thresh = 1e-3
 
 
-#Note:
-#The optimal sigma and C slack parameters were determined by optimization over the Batch SVM to be approxomatly
+#Note: For each realization the C slack hyperparameter and gamma RBF hyperparameter should be tuned to minimize out of sample error
 
-C = 7.321
 
-sigma = 2.9614
+#it is approxmitly five for most realizations
+C = 5.321
+
+#using the 'auto' scikit learn SVM parameters
+gamma = 1/(28*28)
 
 
 #defining a RBF kernel function, tunable parameter sigma
 def kernel(x,y):
 
-	return np.exp( -1/(2*sigma**2)  * np.dot( ( x - y ) , np.transpose(x - y) )  )
+	return np.exp( - gamma * np.dot( ( x - y ) , np.transpose(x - y) )  )
 
 #Intilize the EcoSVM, compute support vectors for first N_start points
 #Inputs are the datapoints, data label and Slack value
@@ -297,7 +300,7 @@ def Run_EcoSVM( xvals, yvals, active_data_x, active_data_y, support_vects, index
 		EcoSVMerror = SVM_error(test_xvals,test_yvals, active_data_x, active_data_y, support_vects,b)
 
 		test_accuracy[point - N_start] = 1 - EcoSVMerror
-		#print( 1 - EcoSVMerror )
+		print( 1 - EcoSVMerror )
 
 		count_active = 0 
 
@@ -555,6 +558,9 @@ def getMNIST():
 
 xvals, yvals, test_xvals, test_yvals = getMNIST()
 
+#Shuffle the order of the training values
+from sklearn.utils import shuffle
+xvals , yvals = shuffle( xvals , yvals, random_state=0)
 
 
 #the labels
@@ -570,7 +576,8 @@ N_test = len(test_yvals)
 
 #Intial number of points used to compute steady state, can be user entered
 #This should be much greater than dataset dimension especily if dataset is highly non-linear
-N_start = 400
+#For MNIST dataset with RBF kernel the data set is essentialy linear so there is no problem with using small number of points
+N_start = 10
 
 
 #subsample to run in reasonable time
